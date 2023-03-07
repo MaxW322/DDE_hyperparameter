@@ -16,7 +16,7 @@ tf = eng.isprime(37)
 
 
 # TODO 实现读取参数，返回数据，计算时间
-# 确实
+
 def fit_output(p):
     i_I = p['i_I']
     i_Q = p['i_Q']
