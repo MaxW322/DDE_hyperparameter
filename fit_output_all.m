@@ -14,7 +14,7 @@ function fit_y = fit_output_all(value)
     r = omega - mu;
     ddefun = @(t,x,Z)[
             (omega-phi*r*x(6)/K)*x(6)-(beta_bd*(Z(3,1)+Z(4,1))/Z(6,1))*x(1)-(mu+(1-phi)*r*x(6)/K)*x(1);
-            (beta_bd*(Z(3,1)+Z(4,1))/Z(6,1))*x(1) - (mu+(1-phi)*r*x(6)/K)*x(2) - (Z(3,1)*i_I+Z(4,1)*i_Q)*x(2)/(Z(3,1)+Z(4,1));
+            (beta_bd*(Z(3,1)+Z(4,1))/Z(6,1))*x(1) - (Z(3,1)*i_I+Z(4,1)*i_Q)*x(2)/(Z(3,1)+Z(4,1)) - (mu+(1-phi)*r*x(6)/K)*x(2);
             (Z(3,1)*i_I+Z(4,1)*i_Q)*x(2)/(Z(3,1)+Z(4,1)) - beta_ir*x(3) - beta_iq*x(3) - (mu+(1-phi)*r*x(6)/K)*x(3);
             beta_iq*x(3) - beta_qr*x(4) - (mu+(1-phi)*r*x(6)/K)*x(4) - gamma_2*x(4);
             beta_qr*x(4) + beta_ir*x(3) - (mu+(1-phi)*r*x(6)/K)*x(5);

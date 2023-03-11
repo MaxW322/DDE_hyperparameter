@@ -13,6 +13,7 @@ from math import sqrt
 # 调用matlab
 eng = matlab.engine.start_matlab()
 tf = eng.isprime(37)
+print('拉起MATLAB成功')
 
 
 # TODO 实现读取参数，返回数据，计算时间
@@ -62,6 +63,34 @@ def para2data_all(file_name):
     return fit_data
 
 
+def para2data_all_newmodel(file_name, u1=0, u2=0, u3=0):
+    tic = time.perf_counter()
+    para = pd.read_csv(f'{file_name}', index_col=None)
+    fit_data = pd.DataFrame(columns=['S', 'E', 'I', 'Q', 'R', 'N'])
+    for i in range(len(para)):
+        i_I = float(para['i_I'][i])
+        i_Q = float(para['i_Q'][i])
+        beta_iq = float(para['beta_iq'][i])
+        beta_ir = float(para['beta_ir'][i])
+        beta_qr = float(para['beta_qr'][i])
+        gamma_2 = float(para['gamma_2'][i])
+        beta_bd = float(para['beta_bd'][i])
+        params = (i_I, i_Q, beta_iq, beta_ir, beta_qr, gamma_2, beta_bd, float(u1), float(u2), float(u3))
+        sols = eng.fit_output_all_new_model(params)
+        sols = [[row[i] for row in sols] for i in range(len(sols[0]))]
+        y = pd.DataFrame(data=sols, columns=['S', 'E', 'I', 'Q', 'R', 'N', 'V'])
+        y_line = y.iloc[i, :]
+        fit_data = pd.concat((fit_data, pd.DataFrame(y_line).T), axis=0)
+        fit_data = fit_data.reset_index().drop(columns='index')
+        print("\r", end="")
+        print('目前时变参数计算至天数: ',i + 1, f'(索引值: {i})', end="")
+        sys.stdout.flush()
+    toc = time.perf_counter()
+    print("\n\033[1;34m paras to data finished (time): ", strftime("%H:%M:%S", gmtime(toc - tic)), "\033[0m")
+
+    return fit_data
+
+
 def para2data(file_name):
     tic = time.perf_counter()
     para = pd.read_csv(f'./output/paras/{file_name}', index_col=None)
@@ -85,8 +114,6 @@ def para2data(file_name):
     print("\n\033[1;34m paras to data finished (time): ", strftime("%H:%M:%S", gmtime(toc - tic)), "\033[0m")
 
     return fit_data
-
-
 
 # stri = 'best_para_all test 2023-02-09 20.33.30.csv'
 # fit = para2data(stri)
