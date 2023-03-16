@@ -11,13 +11,15 @@ from sklearn.metrics import r2_score
 from math import sqrt
 
 # 调用matlab
+print('\n 正在拉起MATLAB ヾ(•ω•`)o')
 eng = matlab.engine.start_matlab()
 tf = eng.isprime(37)
-print('拉起MATLAB成功')
+print('拉起MATLAB成功 ╰(*°▽°*)╯')
 
 
 # TODO 实现读取参数，返回数据，计算时间
 
+# 定参数输入，基础模型输出
 def fit_output(p):
     i_I = p['i_I']
     i_Q = p['i_Q']
@@ -34,7 +36,7 @@ def fit_output(p):
     fit_data = fit_data.reset_index().drop(columns='index')
     return fit_data
 
-
+# 时变参数输入，基础模型导出
 def para2data_all(file_name):
     tic = time.perf_counter()
     para = pd.read_csv(f'./output/paras/{file_name}', index_col=None)
@@ -62,11 +64,12 @@ def para2data_all(file_name):
 
     return fit_data
 
-
-def para2data_all_newmodel(file_name, u1=0, u2=0, u3=0):
+# 时变参数输入，控制模型参数u1, u2, u3
+def para2data_all_newmodel(file_name=None, para=pd.DataFrame(), u1=0, u2=0, u3=0):
     tic = time.perf_counter()
-    para = pd.read_csv(f'{file_name}', index_col=None)
-    fit_data = pd.DataFrame(columns=['S', 'E', 'I', 'Q', 'R', 'N'])
+    if file_name is not None:
+        para = pd.read_csv(f'{file_name}', index_col=None)
+    fit_data = pd.DataFrame(columns=['S', 'E', 'I', 'Q', 'R', 'N', 'V'])
     for i in range(len(para)):
         i_I = float(para['i_I'][i])
         i_Q = float(para['i_Q'][i])
@@ -83,14 +86,14 @@ def para2data_all_newmodel(file_name, u1=0, u2=0, u3=0):
         fit_data = pd.concat((fit_data, pd.DataFrame(y_line).T), axis=0)
         fit_data = fit_data.reset_index().drop(columns='index')
         print("\r", end="")
-        print('目前时变参数计算至天数: ',i + 1, f'(索引值: {i})', end="")
+        print('目前时变参数计算至天数: ', i + 1, f'(索引值: {i})', end="")
         sys.stdout.flush()
     toc = time.perf_counter()
     print("\n\033[1;34m paras to data finished (time): ", strftime("%H:%M:%S", gmtime(toc - tic)), "\033[0m")
 
     return fit_data
 
-
+# 废弃了ಥ_ಥ
 def para2data(file_name):
     tic = time.perf_counter()
     para = pd.read_csv(f'./output/paras/{file_name}', index_col=None)
